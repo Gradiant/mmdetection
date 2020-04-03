@@ -157,18 +157,6 @@ def train_detector(model,
         eval_hook = DistEvalHook if distributed else EvalHook
         runner.register_hook(eval_hook(val_dataloader, **eval_cfg))
 
-    # register eval hooks
-    if validate:
-        val_dataset = build_dataset(cfg.data.val, dict(test_mode=True))
-        val_dataloader = build_dataloader(
-            val_dataset,
-            imgs_per_gpu=1,
-            workers_per_gpu=cfg.data.workers_per_gpu,
-            dist=False,
-            shuffle=False)
-        eval_cfg = cfg.get('evaluation', {})
-        runner.register_hook(EvalHook(val_dataloader, **eval_cfg))
-
     if cfg.resume_from:
         runner.resume(cfg.resume_from)
     elif cfg.load_from:
