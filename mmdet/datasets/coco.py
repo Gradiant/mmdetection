@@ -33,7 +33,7 @@ class CocoDataset(CustomDataset):
 
     def load_annotations(self, ann_file):
         self.coco = COCO(ann_file)
-        self.cat_ids = self.coco.getCatIds()
+        self.cat_ids = self.coco.getCatIds(catNms=self.CLASSES)
         self.cat2label = {
             cat_id: i + 1
             for i, cat_id in enumerate(self.cat_ids)
@@ -56,8 +56,13 @@ class CocoDataset(CustomDataset):
         """Filter images too small or without ground truths."""
         valid_inds = []
         ids_with_ann = set(_['image_id'] for _ in self.coco.anns.values())
+        ids_with_valid_ann = set(_['image_id']
+                                 for _ in self.coco.anns.values()
+                                 if _['category_id'] in self.cat_ids)
         for i, img_info in enumerate(self.img_infos):
-            if self.filter_empty_gt and self.img_ids[i] not in ids_with_ann:
+            if (self.filter_empty_gt and self.img_ids[i] not in ids_with_ann
+                ) or (self.custom_classes
+                      and self.img_ids[i] not in ids_with_valid_ann):
                 continue
             if min(img_info['width'], img_info['height']) >= min_size:
                 valid_inds.append(i)

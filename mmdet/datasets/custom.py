@@ -51,9 +51,11 @@ class CustomDataset(Dataset):
         self.proposal_file = proposal_file
         self.test_mode = test_mode
         self.filter_empty_gt = filter_empty_gt
+        self.custom_classes = False
 
         if classes is not None:
             self.CLASSES = classes
+            self.custom_classes = True
 
         # join paths if data_root is specified
         if self.data_root is not None:
