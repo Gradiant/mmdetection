@@ -57,6 +57,9 @@ class CustomDataset(Dataset):
             self.CLASSES = classes
             self.custom_classes = True
 
+        if classes is not None:
+            self.CLASSES = classes
+
         # join paths if data_root is specified
         if self.data_root is not None:
             if not osp.isabs(self.ann_file):
