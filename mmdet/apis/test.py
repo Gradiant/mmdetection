@@ -2,25 +2,45 @@ import os.path as osp
 import pickle
 import shutil
 import tempfile
+from pathlib import Path
 
 import mmcv
 import torch
 import torch.distributed as dist
 from mmcv.runner import get_dist_info
 
+from mmdet.core import tensor2imgs
 
-def single_gpu_test(model, data_loader, show=False):
+
+def single_gpu_test(model, data_loader, show=False, images_out_dir=None):
     model.eval()
     results = []
     dataset = data_loader.dataset
     prog_bar = mmcv.ProgressBar(len(dataset))
     for i, data in enumerate(data_loader):
         with torch.no_grad():
-            result = model(return_loss=False, rescale=not show, **data)
+            result = model(
+                return_loss=False,
+                rescale=not (show or images_out_dir),
+                **data)
         results.append(result)
 
-        if show:
-            model.module.show_result(data, result)
+        if show or images_out_dir:
+            img_tensor = data['img'][0]
+            img_metas = data['img_metas'][0].data[0]
+            imgs = tensor2imgs(img_tensor, **img_metas[0]['img_norm_cfg'])
+            assert len(imgs) == len(img_metas)
+
+            for img, img_meta in zip(imgs, img_metas):
+                h, w, _ = img_meta['img_shape']
+                img_show = img[:h, :w, :]
+                out_file = '{}/{}'.format(images_out_dir,
+                                          Path(img_meta['filename']).name)
+                model.module.show_result(
+                    img_show,
+                    result,
+                    show=show,
+                    out_file=out_file if images_out_dir else None)
 
         batch_size = data['img'][0].size(0)
         for _ in range(batch_size):
