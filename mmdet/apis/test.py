@@ -12,7 +12,7 @@ from mmcv.runner import get_dist_info
 from mmdet.core import tensor2imgs
 
 
-def single_gpu_test(model, data_loader, show=False, images_out_dir=None):
+def single_gpu_test(model, data_loader, show=False, images_out_dir=None, score_thr=0.3):
     model.eval()
     results = []
     dataset = data_loader.dataset
@@ -40,7 +40,8 @@ def single_gpu_test(model, data_loader, show=False, images_out_dir=None):
                     img_show,
                     result,
                     show=show,
-                    out_file=out_file if images_out_dir else None)
+                    out_file=out_file if images_out_dir else None,
+                    score_thr=score_thr)
 
         batch_size = data['img'][0].size(0)
         for _ in range(batch_size):
