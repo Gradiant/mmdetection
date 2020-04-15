@@ -73,6 +73,7 @@ def parse_args():
         help='directory where painted images will be saved')
     parser.add_argument(
         '--score-thr',
+        type=float,
         default=0.3,
         help='score threshold (default: 0.3)')
     parser.add_argument(
