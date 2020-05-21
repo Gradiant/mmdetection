@@ -42,6 +42,7 @@ This project is released under the [Apache 2.0 license](LICENSE).
 
 v2.0.0 was released in 6/5/2020.
 Please refer to [changelog.md](docs/changelog.md) for details and release history.
+A comparison between v1.x and v2.0 codebases can be found in [compatibility.md](docs/compatibility.md).
 
 ## Benchmark and model zoo
 
@@ -88,6 +89,7 @@ Other features
 - [x] [FSAF](configs/fsaf/README.md)
 - [x] [PAFPN](configs/pafpn/README.md)
 
+Some other methods are also supported in [projects using MMDetection](./docs/projects.md).
 
 ## Installation
 
